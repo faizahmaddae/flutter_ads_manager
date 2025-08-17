@@ -1,4 +1,29 @@
-Sure! Here’s the full contents of the `README.md` you can copy and paste directly:
+# Flutter Ads Manager
+
+A clean, reusable ads management library for Flutter that integrates Google Mobile Ads (AdMob) with GDPR‑compliant consent handling. It supports adaptive **banner ads**, **collapsible## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## Support
+
+If you find this project helpful, please consider:
+- ⭐ Starring the repository
+- 🐛 Reporting bugs via [Issues](https://github.com/faizahmaddae/flutter_ads_manager/issues)
+- 💡 Suggesting new features
+- 📖 Improving documentation
+
+## License
+
+This project is based on Google's official Flutter AdMob samples and is provided as a reference implementation.  You are responsible for ensuring your app complies with Google's policies and local regulations.
+
+---
+
+**Repository:** https://github.com/faizahmaddae/flutter_ads_manager  
+**Author:** [@faizahmaddae](https://github.com/faizahmaddae)nner ads**, **interstitial ads** and **app‑open ads** without any third‑party dependencies—only `google_mobile_ads` is used.Here’s the full contents of the `README.md` you can copy and paste directly:
 
 ````
 # Flutter Ads Manager
@@ -14,6 +39,24 @@ A clean, reusable ads management library for Flutter that integrates Google Mob
 - 🚀 **Interstitials** – Preloads interstitial ads, shows them on demand and auto‑reloads after each display.
 - 💤 **App‑open ads** – Loads one app‑open ad, checks its freshness (default 4 hours) and shows it when your app comes to the foreground.
 - 🔄 **Lifecycle integration** – `AdLifecycleObserver` hooks into the app lifecycle to automatically show app‑open ads when appropriate.
+
+## Installation
+
+1. **Clone the repository:**
+```bash
+git clone https://github.com/faizahmaddae/flutter_ads_manager.git
+cd flutter_ads_manager
+```
+
+2. **Install dependencies:**
+```bash
+flutter pub get
+```
+
+3. **Run the project:**
+```bash
+flutter run
+```
 
 ## Getting Started
 
@@ -144,6 +187,20 @@ void dispose() {
 
 The manager caches one ad, discards it after 4 hours and shows it when the app returns to the foreground.
 
+## Project Structure
+
+```
+flutter_ads_manager/
+├── lib/
+│   ├── main.dart              # Example usage and app entry point
+│   └── ads_manager.dart       # Core ads management library
+├── android/                   # Android-specific configuration
+├── ios/                      # iOS-specific configuration
+├── test/                     # Unit tests
+├── pubspec.yaml              # Dependencies and project configuration
+└── README.md                 # This documentation
+```
+
 ## File Overview
 
 * **`ads_manager.dart`** – Contains all classes:
@@ -177,4 +234,3 @@ This project is based on Google’s official Flutter AdMob samples and is provid
 ```
 
 You can copy and paste this into a `README.md` file in your project repository. Let me know if you'd like any further adjustments!
-```
