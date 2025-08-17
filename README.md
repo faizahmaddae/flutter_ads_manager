@@ -1,6 +1,8 @@
 # Flutter Ads Manager
 
-A cle## Features
+A clean, reusable ads management library for Flutter that integrates Google Mobile Ads (AdMob) with GDPR‑compliant consent handling. It supports adaptive **banner ads**, **collapsible banner ads**, **interstitial ads** and **app‑open ads** without any third‑party dependencies—only `google_mobile_ads` is used.
+
+## Features
 
 - ✅ **Unified API** – All ad logic is encapsulated in a single `ads_manager.dart` file so you can drop it into any Flutter project.
 - 📜 **GDPR/UMP consent flow** – Uses Google's built‑in User Messaging Platform (UMP) to collect consent from European users and automatically serves non‑personalised ads when required.
