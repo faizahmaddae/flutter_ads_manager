@@ -91,7 +91,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Ads Manager Demo')),
-      bottomNavigationBar: const BannerAdView(),
+      bottomNavigationBar: const BannerAdView(
+        // collapsible: CollapsiblePlacement.bottom,
+      ),
       body: SafeArea(
         child: Stack(
           children: [
