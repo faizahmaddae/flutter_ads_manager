@@ -1,122 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'ads_manager.dart';
 
-void main() {
+/// A minimal example demonstrating how to use the classes defined in
+/// `ads_manager.dart`.  This app initialises ad unit ids, gathers
+/// consent, initialises the Mobile Ads SDK, sets up an App Open
+/// manager tied to the application lifecycle, displays a banner ad,
+/// and provides a button to trigger an interstitial ad.
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Configure your ad unit ids here.  Replace these with your own
+  // values from the AdMob console when releasing your app.
+  await Ads.instance.init(
+    bannerAdUnitIdAndroid: 'ca-app-pub-3940256099942544/9214589741',
+    bannerAdUnitIdiOS: 'ca-app-pub-3940256099942544/2435281174',
+    interstitialAdUnitIdAndroid: 'ca-app-pub-3940256099942544/1033173712',
+    interstitialAdUnitIdiOS: 'ca-app-pub-3940256099942544/4411468910',
+    appOpenAdUnitIdAndroid: 'ca-app-pub-3940256099942544/9257395921',
+    appOpenAdUnitIdiOS: 'ca-app-pub-3940256099942544/5575463023',
+    // Add your device ids here during testing.  Example:
+    // testDeviceIds: ['YOUR_DEVICE_ID'],
+  );
+
+  // Request consent and display the consent form if necessary.  The
+  // method completes once consent gathering is finished.  You may
+  // specify a DebugGeography to force the consent form to appear
+  // during development (commented out below).  Do **not** set
+  // debugGeography in production.
+  await ConsentManager.instance.requestConsentAndShowFormIfNeeded(
+    // debugGeography: DebugGeography.debugGeographyEea,
+  );
+
+  // Initialise the Mobile Ads SDK once consent has been obtained.  If
+  // consent was denied the SDK will still initialise but only
+  // non‑personalised ads will be served (controlled via
+  // ConsentManager.getAdRequest()).
+  await MobileAds.instance.initialize();
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'Ads Manager Demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _HomePageState extends State<HomePage> {
+  late final AppOpenManager _appOpenManager;
+  late final AdLifecycleObserver _adLifecycleObserver;
+  late final InterstitialController _interstitialController;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  @override
+  void initState() {
+    super.initState();
+    // Create an AppOpenManager and preload the first app open ad.
+    _appOpenManager = AppOpenManager();
+    _appOpenManager.loadAd();
+    // Tie the AppOpenManager to app lifecycle events.
+    _adLifecycleObserver = AdLifecycleObserver(appOpenManager: _appOpenManager);
+    _adLifecycleObserver.startListening();
+    // Create an interstitial controller and preload the first ad.
+    _interstitialController = InterstitialController();
+    _interstitialController.load();
+  }
+
+  @override
+  void dispose() {
+    _interstitialController.dispose();
+    _adLifecycleObserver.stopListening();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+      appBar: AppBar(title: const Text('Ads Manager Demo')),
+      bottomNavigationBar: const BannerAdView(),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // Main content of the app goes here.  This example
+            // displays a simple button that shows an interstitial ad.
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  _interstitialController.show();
+                },
+                child: const Text('Show Interstitial'),
+              ),
             ),
+            // Banner ad anchored to the bottom of the screen.
+            // const BannerAdView(collapsible: CollapsiblePlacement.bottom),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
